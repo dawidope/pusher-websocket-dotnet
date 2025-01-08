@@ -73,6 +73,9 @@ namespace PusherClient
         private SemaphoreSlim _connectLock = new SemaphoreSlim(1);
         private SemaphoreSlim _disconnectLock = new SemaphoreSlim(1);
 
+    
+        private CancellationTokenSource pingCancellationTokenSource;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Pusher" /> class.
         /// </summary>
@@ -133,6 +136,7 @@ namespace PusherClient
                     }
 
                     SubscribeExistingChannels();
+                    StartPingTask();
                     UnsubscribeBacklog();
                 });
             }
@@ -140,6 +144,7 @@ namespace PusherClient
             {
                 Task.Run(() =>
                 {
+                    pingCancellationTokenSource?.Cancel();
                     MarkChannelsAsUnsubscribed();
                     if (Disconnected != null)
                     {
@@ -181,6 +186,27 @@ namespace PusherClient
                     }
                 });
             }
+        }
+
+        void StartPingTask() 
+        {
+            pingCancellationTokenSource?.Cancel();
+            pingCancellationTokenSource = new CancellationTokenSource();
+
+            var token = pingCancellationTokenSource.Token;
+
+            Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    if (State == ConnectionState.Connected)
+                {
+                        await _connection.SendAsync(DefaultSerializer.Default.Serialize(new PusherPingEvent())).ConfigureAwait(false);
+                        
+                        await Task.Delay(25000);
+                    }
+                }
+            }, token);
         }
 
         void IPusher.ErrorOccured(PusherException pusherException)

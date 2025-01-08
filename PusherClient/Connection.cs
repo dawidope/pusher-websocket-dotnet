@@ -49,7 +49,7 @@ namespace PusherClient
                 }
 
                 ChangeState(ConnectionState.Connecting);
-
+        
                 _websocket = new WebSocket(_url)
                 {
                     EnableAutoSendPing = true,

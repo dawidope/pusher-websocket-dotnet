@@ -7,6 +7,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NetStandardImplicitPackageVersion>2.0.0</NetStandardImplicitPackageVersion>
     <SignAssembly>false</SignAssembly>
+    <Nullable>Disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(SignAssembly) == 'true'">

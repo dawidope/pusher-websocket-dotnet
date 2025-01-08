@@ -5,6 +5,8 @@
         public const string PUSHER_MESSAGE_PREFIX = "pusher";
         public const string ERROR = "pusher:error";
 
+        public const string PING = "pusher:ping";
+
         public const string CONNECTION_ESTABLISHED = "pusher:connection_established";
 
         public const string CHANNEL_SUBSCRIBE = "pusher:subscribe";
